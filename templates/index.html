@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EcoGrid – Turning Waste into Smart Power</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <header>
+      <nav class="navbar">
+        <div class="logo">⚡ EcoGrid</div>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html" class="active">Home</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="login.html">Login</a></li>
+          <li><a href="signup.html" class="btn">Sign Up</a></li>
+        </ul>
+        <div class="menu-icon" id="menu-icon">☰</div>
+      </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero fade-in">
+      <div class="hero-content">
+        <h1>Turning Wastewater into Smart Sustainable Power</h1>
+        <p>
+          EcoGrid generates green electricity using sewage water through
+          Microbial Fuel Cells (MFCs), storing it in smart grid systems and
+          collaborating with TNEB for efficient energy distribution.
+        </p>
+        <a href="about.html" class="btn">Learn More</a>
+      </div>
+    </section>
+
+    <!-- Ideas -->
+    <section class="ideas slide-up">
+      <h2>💡 Our Idea</h2>
+      <p>
+        We convert wastewater into electricity using Microbial Fuel Cells
+        (MFCs). The generated power is stored in EcoGrid batteries and
+        distributed like LPG supply — creating an eco-friendly, decentralized
+        energy solution.
+      </p>
+    </section>
+
+    <!-- What We Do -->
+    <section class="services fade-in">
+      <h2>⚙️ What We Do</h2>
+      <div class="service-cards">
+        <div class="card">
+          <h3>Microbial Fuel Cells</h3>
+          <p>
+            Harness natural bacterial reactions to generate clean electricity.
+          </p>
+        </div>
+        <div class="card">
+          <h3>AI Forecasting</h3>
+          <p>AI predicts demand using LSTM models to optimize energy flow.</p>
+        </div>
+        <div class="card">
+          <h3>Grid Collaboration</h3>
+          <p>Partnering with TNEB to supply renewable energy efficiently.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>
+        © 2025 EcoGrid | Designed by Thunder Coders | Sustainable Energy for All
+      </p>
+    </footer>
+
+    <script>
+      const menu = document.getElementById("menu-icon");
+      const nav = document.getElementById("navLinks");
+      menu.onclick = () => {
+        nav.classList.toggle("open");
+      };
+    </script>
+  </body>
+</html>

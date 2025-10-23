@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, send_file
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -6,13 +5,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import qrcode
 import io
 from twilio.rest import Client
-=======
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for, send_from_directory
-from flask_cors import CORS
-from pymongo import MongoClient
-from werkzeug.security import generate_password_hash, check_password_hash
-import time
->>>>>>> a69077f849c6ad7e0e3de4316ca8c73baaa448df
 
 # ------------------ APP SETUP ------------------
 app = Flask(__name__)
@@ -24,11 +16,11 @@ client = MongoClient("mongodb://127.0.0.1:27017/")
 db = client["ecogrid"]
 users = db["users"]
 
-# ------------------ TWILIO CONFIG ------------------
-TWILIO_ACCOUNT_SID = "ACd8d38de4e764c1d694c629be66f4a48da"
-TWILIO_AUTH_TOKEN = "1242aa79ea16b8117b83a7ba9336023e"
-TWILIO_PHONE_NUMBER = "+12765314134"  # Twilio trial number
-twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+# # ------------------ TWILIO CONFIG ------------------
+# TWILIO_ACCOUNT_SID = "ACd8d38de4e764c1d694c629be66f4a48da"
+# TWILIO_AUTH_TOKEN = "1242aa79ea16b8117b83a7ba9336023e"
+# TWILIO_PHONE_NUMBER = "+12765314134"  # Twilio trial number
+# twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 # ------------------ SUBSCRIPTION PLANS ------------------
 plans = [
@@ -214,17 +206,8 @@ def get_locations():
 def get_plans():
     return jsonify(plans)
 
-<<<<<<< HEAD
 # ========================================================
 #                       RUN APP
 # ========================================================
-=======
-# ✅ heatmap route
-@app.route("/heatmap")
-def heatmap_page():
-    return render_template("heatmap.html", user=session.get("user"))
-
-
->>>>>>> a69077f849c6ad7e0e3de4316ca8c73baaa448df
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

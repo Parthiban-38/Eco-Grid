@@ -4,11 +4,38 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>EcoGrid – Turning Waste into Smart Power</title>
-     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+      /* Simple modal styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        justify-content: center;
+        align-items: center;
+      }
+      .modal-content {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        width: 300px;
+        text-align: center;
+      }
+      .close {
+        float: right;
+        cursor: pointer;
+        font-size: 18px;
+      }
+    </style>
   </head>
   <body>
+    <div class="page-wrapper">
     <!-- Navbar -->
-     <div class="page-wrapper">
     <header>
       <nav class="navbar">
         <div class="logo">⚡ EcoGrid</div>
@@ -17,83 +44,203 @@
           <li><a href="/about">About Us</a></li>
           <li><a href="/contact">Contact</a></li>
           {% if user %}
-      <!-- Logged in -->
-      <li>
-        <img src="{{ url_for('static', filename='images/user-icon.jpg') }}" 
-             alt="User Icon" class="user-icon" />
-        <!-- <form action="{{ url_for('logout') }}" method="get" style="display:inline;"> -->
-        <li><a href="/logout" class="button">Logout</a></li>
-        </form>
-      </li>
-    {% else %}
-      <!-- Not logged in -->
-      <li><a href="/login" class="button">Login</a></li>
-      <li><a href="/signup" class="button">Signup</a></li>
-    {% endif %}
-    <li><a href="/heatmap">Heatmap</a></li>
+            <li>
+              <img src="{{ url_for('static', filename='images/user-icon.jpg') }}" 
+                  alt="User Icon" class="user-icon" id="userIcon" style="cursor:pointer;width:40px;border-radius:50%;" />
+            </li>
+            <li><a href="/logout" class="button">Logout</a></li>
+          {% else %}
+            <li><a href="/login" class="button">Login</a></li>
+            <li><a href="/signup" class="button">Signup</a></li>
+          {% endif %}
+          <li><a href="/heatmap">Heatmap</a></li>
         </ul>
         <div class="menu-icon" id="menu-icon">☰</div>
       </nav>
     </header>
 
     <!-- Hero -->
-    <section class="hero fade-in">
-      <div class="hero-content">
-        <h1>Turning Wastewater into Smart Sustainable Power</h1>
-        <p>
-          EcoGrid generates green electricity using sewage water through
-          Microbial Fuel Cells (MFCs), storing it in smart grid systems and
-          collaborating with TNEB for efficient energy distribution.
-        </p>
-        <a href="about.html" class="btn">Learn More</a>
-      </div>
-    </section>
-
-    <!-- Ideas -->
-    <section class="ideas slide-up">
-      <h2>💡 Our Idea</h2>
+   <section class="hero fade-in">
+  <div class="hero-container">
+    <div class="hero-content">
+      <h1>Turning Wastewater into Smart Sustainable Power</h1>
       <p>
-        We convert wastewater into electricity using Microbial Fuel Cells
-        (MFCs). The generated power is stored in EcoGrid batteries and
-        distributed like LPG supply — creating an eco-friendly, decentralized
-        energy solution.
+        EcoGrid generates green electricity using sewage water through
+        Microbial Fuel Cells (MFCs), storing it in smart grid systems and
+        collaborating with TNEB for efficient energy distribution.
       </p>
-    </section>
+      <a href="/about" class="btn">Learn More</a>
+    </div>
 
-    <!-- What We Do -->
-    <section class="services fade-in">
-      <h2>⚙️ What We Do</h2>
-      <div class="service-cards">
-        <div class="card">
-          <h3>Microbial Fuel Cells</h3>
-          <p>
-            Harness natural bacterial reactions to generate clean electricity.
-          </p>
-        </div>
-        <div class="card">
-          <h3>AI Forecasting</h3>
-          <p>AI predicts demand using LSTM models to optimize energy flow.</p>
-        </div>
-        <div class="card">
-          <h3>Grid Collaboration</h3>
-          <p>Partnering with TNEB to supply renewable energy efficiently.</p>
-        </div>
-      </div>
-    </section>
+    <div class="hero-image">
+      <img src="{{ url_for('static', filename='images/ecogrid_hero.jpg') }}" alt="EcoGrid Project Image">
+    </div>
+  </div>
+</section>
+
+
+  <!-- Subscription Section -->
+<section class="subscriptions fade-in">
+  <h2>💳 Subscribe to EcoGrid</h2>
+  <p>Choose a plan and get updates via SMS.</p>
+
+  <div class="subscription-cards">
+    {% for plan in plans %}
+    <div class="sub-card">
+      <h3>{{ plan.name }}</h3>
+      <p>Price: ₹{{ plan.price }}</p>
+      <button onclick="selectPlan({{ plan.id }}, '{{ plan.name }}', {{ plan.price }})">
+        Select Plan
+      </button>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div id="qr-container" style="text-align:center; margin-top:20px; display:none;">
+    <h4>Scan to Pay</h4>
+    <img id="qr-img" src="" alt="QR Code" />
+  </div>
+</section>
+
+<script>
+  const menu = document.getElementById("menu-icon");
+  const nav = document.getElementById("navLinks");
+  menu.onclick = () => nav.classList.toggle("open");
+
+  const isUserLoggedIn = {{ 'true' if user else 'false' }};
+  let selectedPlan = null;
+  let userDetails = null;
+
+  // Fetch user details once on load (if logged in)
+  if (isUserLoggedIn) {
+    fetch("/get_user_details")
+      .then(res => res.json())
+      .then(data => userDetails = data);
+  }
+
+  function selectPlan(id, name, price) {
+    if (!isUserLoggedIn) {
+      alert("Please log in to see and subscribe to plans!");
+      window.location.href = "/login";
+      return;
+    }
+
+    selectedPlan = { id, name, price };
+    const paymentUrl = `https://paymentgateway.com/pay?amount=${price}`;
+
+    fetch("/generate_qr", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ payment_url: paymentUrl })
+    })
+    .then(res => res.blob())
+    .then(blob => {
+      const url = URL.createObjectURL(blob);
+      document.getElementById("qr-img").src = url;
+      document.getElementById("qr-container").style.display = "block";
+
+      // ✅ Automatically send SMS after QR is shown
+      if (userDetails && userDetails.mobile) {
+        fetch("/send_sms", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            phone: userDetails.mobile,
+            message: `You subscribed to ${selectedPlan.name} for ₹${selectedPlan.price}. Thank you for supporting sustainable energy!`
+          })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            alert(`SMS sent successfully to ${userDetails.mobile}!`);
+          } else {
+            alert("Error sending SMS");
+          }
+        });
+      } else {
+        alert("Mobile number not found for your account!");
+      }
+    });
+  }
+</script>
+
 
     <!-- Footer -->
     <footer>
-      <p>
-        © 2025 EcoGrid | Designed by Thunder Coders | Sustainable Energy for All
-      </p>
+      <p>© 2025 EcoGrid | Designed by Thunder Coders | Sustainable Energy for All</p>
     </footer>
-     </div>
-    <script>
-      const menu = document.getElementById("menu-icon");
-      const nav = document.getElementById("navLinks");
-      menu.onclick = () => {
-        nav.classList.toggle("open");
-      };
-    </script>
+    </div>
+
+    <!-- User Details Modal -->
+    <div id="userModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeModal">&times;</span>
+        <h3>User Details</h3>
+        <p><b>Name:</b> <span id="userName"></span></p>
+        <p><b>Email:</b> <span id="userEmail"></span></p>
+        <p><b>Mobile:</b> <span id="userMobile"></span></p>
+        <p><b>Selected Plan:</b> <span id="userPlan"></span></p>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+   <script>
+  const isUserLoggedIn = {{ 'true' if user else 'false' }};
+  let selectedPlan = null;
+
+  // Show/Hide Navbar
+  const menu = document.getElementById("menu-icon");
+  const nav = document.getElementById("navLinks");
+  menu.onclick = () => nav.classList.toggle("open");
+
+  // Select plan and generate QR
+  function selectPlan(id, name, price) {
+    if (!isUserLoggedIn) {
+      alert("Please log in to see and subscribe to plans!");
+      window.location.href = "/login";
+      return;
+    }
+
+    selectedPlan = { id, name, price };
+    const paymentUrl = `https://paymentgateway.com/pay?amount=${price}`;
+
+    fetch("/generate_qr", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ payment_url: paymentUrl, plan_name: name, plan_price: price })
+    })
+      .then(res => res.blob())
+      .then(blob => {
+        const url = URL.createObjectURL(blob);
+        document.getElementById("qr-img").src = url;
+        document.getElementById("qr-container").style.display = "block";
+      });
+  }
+
+  // User modal show/hide
+  const userIcon = document.getElementById("userIcon");
+  const userModal = document.getElementById("userModal");
+  const closeModal = document.getElementById("closeModal");
+
+  if (userIcon) {
+    userIcon.addEventListener("click", () => {
+      fetch("/get_user_details")
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("userName").textContent = data.name || "-";
+          document.getElementById("userEmail").textContent = data.email || "-";
+          document.getElementById("userMobile").textContent = data.mobile || "-";
+          document.getElementById("userPlan").textContent = data.plan || "No plan selected";
+          userModal.style.display = "flex";
+        });
+    });
+  }
+
+  closeModal.onclick = () => (userModal.style.display = "none");
+  window.onclick = (e) => {
+    if (e.target === userModal) userModal.style.display = "none";
+  };
+</script>
+
   </body>
 </html>

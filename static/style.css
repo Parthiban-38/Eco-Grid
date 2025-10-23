@@ -1,3 +1,63 @@
+.subscriptions {
+  padding: 50px 20px;
+  background: #f9f9f9;
+  text-align: center;
+}
+
+.subscription-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.sub-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  width: 200px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.sub-card h3 {
+  margin-bottom: 10px;
+}
+
+.sub-card button {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.sub-card button:hover {
+  background: #218838;
+}
+
+#qr-container input {
+  padding: 8px;
+  margin: 10px 0;
+  width: 200px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+#qr-container button {
+  padding: 8px 12px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#qr-container button:hover {
+  background: #0056b3;
+}
+
 .user-icon {
   width: 40px;     /* Adjust width as needed */
   height: 40px;    /* Adjust height as needed */

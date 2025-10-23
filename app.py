@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, send_file
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -5,6 +6,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import qrcode
 import io
 from twilio.rest import Client
+=======
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, send_from_directory
+from flask_cors import CORS
+from pymongo import MongoClient
+from werkzeug.security import generate_password_hash, check_password_hash
+import time
+>>>>>>> a69077f849c6ad7e0e3de4316ca8c73baaa448df
 
 # ------------------ APP SETUP ------------------
 app = Flask(__name__)
@@ -206,8 +214,17 @@ def get_locations():
 def get_plans():
     return jsonify(plans)
 
+<<<<<<< HEAD
 # ========================================================
 #                       RUN APP
 # ========================================================
+=======
+# ✅ heatmap route
+@app.route("/heatmap")
+def heatmap_page():
+    return render_template("heatmap.html", user=session.get("user"))
+
+
+>>>>>>> a69077f849c6ad7e0e3de4316ca8c73baaa448df
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

@@ -76,9 +76,6 @@ html, body {
   flex-direction: column;
 }
 
-main {
-  flex: 1; /* Pushes footer to bottom when content is short */
-}
 
 /* Footer Always at Bottom */
 footer {

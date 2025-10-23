@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, send_from_directory
 from flask_cors import CORS
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
+import time
 
 app = Flask(__name__)
 CORS(app)
@@ -91,6 +92,7 @@ def get_locations():
 @app.route("/heatmap")
 def heatmap_page():
     return render_template("heatmap.html", user=session.get("user"))
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

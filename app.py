@@ -16,13 +16,7 @@ client = MongoClient("mongodb://127.0.0.1:27017/")
 db = client["ecogrid"]
 users = db["users"]
 
-# # ------------------ TWILIO CONFIG ------------------
-# TWILIO_ACCOUNT_SID = "ACd8d38de4e764c1d694c629be66f4a48da"
-# TWILIO_AUTH_TOKEN = "1242aa79ea16b8117b83a7ba9336023e"
-# TWILIO_PHONE_NUMBER = "+12765314134"  # Twilio trial number
-# twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
-# ------------------ SUBSCRIPTION PLANS ------------------
 plans = [
     {"id": 1, "name": "Starter Plan", "price": 199},
     {"id": 2, "name": "Pro Plan", "price": 499},

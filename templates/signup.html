@@ -27,10 +27,27 @@
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
 
+      // 🔍 Get user location before sending data
+      let latitude = null;
+      let longitude = null;
+
+      if (navigator.geolocation) {
+        await new Promise((resolve) => {
+          navigator.geolocation.getCurrentPosition((pos) => {
+            latitude = pos.coords.latitude;
+            longitude = pos.coords.longitude;
+            resolve();
+          }, () => {
+            alert("Location access denied. We'll continue without it.");
+            resolve();
+          });
+        });
+      }
+
       const res = await fetch('/api/signup', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ name, email, password })
+        body: JSON.stringify({ name, email, password, latitude, longitude })
       });
 
       const data = await res.json();

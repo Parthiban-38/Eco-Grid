@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoGrid | User Heatmap</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+  <script>
+    // Initialize map
+    const map = L.map('map').setView([11.1271, 78.6569], 7); // Centered around Tamil Nadu
+
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Fetch user location data
+    fetch('/api/locations')
+      .then(res => res.json())
+      .then(data => {
+        if (data.length === 0) {
+          alert("No user location data found!");
+          return;
+        }
+        // Create heatmap layer
+        L.heatLayer(data, {
+          radius: 25,
+          blur: 15,
+          maxZoom: 10,
+          minOpacity: 0.4
+        }).addTo(map);
+      })
+      .catch(err => console.error(err));
+  </script>
+</body>
+</html>

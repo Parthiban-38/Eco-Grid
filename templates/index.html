@@ -8,6 +8,7 @@
   </head>
   <body>
     <!-- Navbar -->
+     <div class="page-wrapper">
     <header>
       <nav class="navbar">
         <div class="logo">⚡ EcoGrid</div>
@@ -15,8 +16,20 @@
           <li><a href="/" class="active">Home</a></li>
           <li><a href="/about">About Us</a></li>
           <li><a href="/contact">Contact</a></li>
-          <li><a href="/login">Login</a></li>
-          <li><a href="/signup" class="btn">Sign Up</a></li>
+          {% if user %}
+      <!-- Logged in -->
+      <li>
+        <img src="{{ url_for('static', filename='images/user-icon.jpg') }}" 
+             alt="User Icon" class="user-icon" />
+        <!-- <form action="{{ url_for('logout') }}" method="get" style="display:inline;"> -->
+        <li><a href="/logout" class="button">Logout</a></li>
+        </form>
+      </li>
+    {% else %}
+      <!-- Not logged in -->
+      <li><a href="/login" class="button">Login</a></li>
+      <li><a href="/signup" class="button">Signup</a></li>
+    {% endif %}
         </ul>
         <div class="menu-icon" id="menu-icon">☰</div>
       </nav>
@@ -73,7 +86,7 @@
         © 2025 EcoGrid | Designed by Thunder Coders | Sustainable Energy for All
       </p>
     </footer>
-
+     </div>
     <script>
       const menu = document.getElementById("menu-icon");
       const nav = document.getElementById("navLinks");

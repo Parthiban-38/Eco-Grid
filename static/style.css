@@ -1,3 +1,36 @@
+.user-icon {
+  width: 40px;     /* Adjust width as needed */
+  height: 40px;    /* Adjust height as needed */
+  object-fit: cover; /* Ensures the image scales nicely */
+  border-radius: 50%; /* Optional: makes the image circular */
+}
+
+/* Layout Wrapper to Keep Footer at Bottom */
+html, body {
+  height: 100%;
+}
+
+.page-wrapper {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1; /* Pushes footer to bottom when content is short */
+}
+
+/* Footer Always at Bottom */
+footer {
+  background: #0b3d2e;
+  color: #fff;
+  text-align: center;
+  padding: 15px 0;
+  font-size: 0.9rem;
+  width: 100%;
+  margin-top: auto;
+}
+
 /* Base Reset */
 * {
   margin: 0;

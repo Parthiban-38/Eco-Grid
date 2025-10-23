@@ -76,10 +76,6 @@ def logout():
     session.pop("user", None)
     return redirect(url_for("home"))
 
-
-if __name__ == "__main__":
-    app.run(debug=True, port=5000)
-    
 # ✅ Location route
 @app.route("/api/locations")
 def get_locations():
@@ -95,3 +91,7 @@ def get_locations():
 @app.route("/heatmap")
 def heatmap_page():
     return render_template("heatmap.html", user=session.get("user"))
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)
+    

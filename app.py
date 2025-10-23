@@ -11,6 +11,11 @@ app = Flask(__name__)
 CORS(app)
 app.secret_key = "your_secret_key_here"
 
+
+# # ------------------ TWILIO CONFIG ------------------
+
+
+# ------------------ SUBSCRIPTION PLANS ------------------
 # ------------------ DATABASE ------------------
 client = MongoClient("mongodb://127.0.0.1:27017/")
 db = client["ecogrid"]
@@ -18,9 +23,9 @@ users = db["users"]
 
 
 plans = [
-    {"id": 1, "name": "Starter Plan", "price": 199},
-    {"id": 2, "name": "Pro Plan", "price": 499},
-    {"id": 3, "name": "Enterprise Plan", "price": 999},
+    {"id": 1, "name": "Starter Plan", "price": 199, "power_output": "50 kWh/month"},
+    {"id": 2, "name": "Pro Plan", "price": 499, "power_output": "150 kWh/month"},
+    {"id": 3, "name": "Enterprise Plan", "price": 999, "power_output": "500 kWh/month"},
 ]
 
 # ========================================================

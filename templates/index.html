@@ -59,24 +59,36 @@
       </nav>
     </header>
 
-    <!-- Hero -->
-   <section class="hero fade-in">
-  <div class="hero-container">
-    <div class="hero-content">
-      <h1>Turning Wastewater into Smart Sustainable Power</h1>
-      <p>
-        EcoGrid generates green electricity using sewage water through
-        Microbial Fuel Cells (MFCs), storing it in smart grid systems and
-        collaborating with TNEB for efficient energy distribution.
-      </p>
-      <a href="/about" class="btn">Learn More</a>
-    </div>
+  <!-- Hero Section -->
+<section class="hero fade-in" style="
+    background: url('{{ url_for('static', filename='images/bg.jpg') }}') no-repeat center center;
+    background-size: cover;
+    position: relative;
+    padding: 120px 20px;
+    color: white;
+    text-align: center;
+">
+  <!-- Dark overlay for readability -->
+  <div style="
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 1;
+  "></div>
 
-    <div class="hero-image">
-      <img src="{{ url_for('static', filename='images/ecogrid_hero.jpg') }}" alt="EcoGrid Project Image">
-    </div>
+  <!-- Hero Content -->
+  <div style="position: relative; z-index: 2; max-width: 800px; margin: 0 auto;">
+    <h1>Turning Wastewater into Smart Sustainable Power</h1>
+    <p>
+      EcoGrid generates green electricity using sewage water through
+      Microbial Fuel Cells (MFCs), storing it in smart grid systems and
+      collaborating with TNEB for efficient energy distribution.
+    </p>
+    <a href="/about" class="btn" style="margin-top: 20px; display: inline-block;">Learn More</a>
   </div>
 </section>
+
 
 
   <!-- Subscription Section -->
@@ -89,7 +101,8 @@
     <div class="sub-card">
       <h3>{{ plan.name }}</h3>
       <p>Price: ₹{{ plan.price }}</p>
-      <button onclick="selectPlan({{ plan.id }}, '{{ plan.name }}', {{ plan.price }})">
+      <p>Power Output: {{ plan.power_output }}</p>
+      <button onclick="selectPlan({{ plan.id }}, '{{ plan.name }}', {{ plan.price }}, '{{ plan.power_output }}')">
         Select Plan
       </button>
     </div>
@@ -101,23 +114,41 @@
     <img id="qr-img" src="" alt="QR Code" />
   </div>
 </section>
+<!-- Footer -->
+    <footer>
+      <p>© 2025 EcoGrid | Designed by Thunder Coders | Sustainable Energy for All</p>
+    </footer>
+    </div>
 
+    <!-- User Details Modal -->
+    <div id="userModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeModal">&times;</span>
+        <h3>User Details</h3>
+        <p><b>Name:</b> <span id="userName"></span></p>
+        <p><b>Email:</b> <span id="userEmail"></span></p>
+        <p><b>Mobile:</b> <span id="userMobile"></span></p>
+        <p><b>Selected Plan:</b> <span id="userPlan"></span></p>
+      </div>
+    </div>
 <script>
-  const menu = document.getElementById("menu-icon");
-  const nav = document.getElementById("navLinks");
-  menu.onclick = () => nav.classList.toggle("open");
-
   const isUserLoggedIn = {{ 'true' if user else 'false' }};
   let selectedPlan = null;
   let userDetails = null;
 
-  // Fetch user details once on load (if logged in)
+  // Navbar toggle
+  const menu = document.getElementById("menu-icon");
+  const nav = document.getElementById("navLinks");
+  menu.onclick = () => nav.classList.toggle("open");
+
+  // Fetch user details if logged in
   if (isUserLoggedIn) {
     fetch("/get_user_details")
       .then(res => res.json())
       .then(data => userDetails = data);
   }
 
+  // Plan selection and QR generation
   function selectPlan(id, name, price) {
     if (!isUserLoggedIn) {
       alert("Please log in to see and subscribe to plans!");
@@ -139,14 +170,14 @@
       document.getElementById("qr-img").src = url;
       document.getElementById("qr-container").style.display = "block";
 
-      // ✅ Automatically send SMS after QR is shown
+      // Auto SMS send
       if (userDetails && userDetails.mobile) {
         fetch("/send_sms", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             phone: userDetails.mobile,
-            message: `You subscribed to ${selectedPlan.name} for ₹${selectedPlan.price}. Thank you for supporting sustainable energy!`
+            message: `You subscribed to ${name} for ₹${price}. Thank you for supporting sustainable energy!`
           })
         })
         .then(res => res.json())
@@ -162,62 +193,8 @@
       }
     });
   }
-</script>
 
-
-    <!-- Footer -->
-    <footer>
-      <p>© 2025 EcoGrid | Designed by Thunder Coders | Sustainable Energy for All</p>
-    </footer>
-    </div>
-
-    <!-- User Details Modal -->
-    <div id="userModal" class="modal">
-      <div class="modal-content">
-        <span class="close" id="closeModal">&times;</span>
-        <h3>User Details</h3>
-        <p><b>Name:</b> <span id="userName"></span></p>
-        <p><b>Email:</b> <span id="userEmail"></span></p>
-        <p><b>Mobile:</b> <span id="userMobile"></span></p>
-        <p><b>Selected Plan:</b> <span id="userPlan"></span></p>
-      </div>
-    </div>
-
-    <!-- Scripts -->
-   <script>
-  const isUserLoggedIn = {{ 'true' if user else 'false' }};
-  let selectedPlan = null;
-
-  // Show/Hide Navbar
-  const menu = document.getElementById("menu-icon");
-  const nav = document.getElementById("navLinks");
-  menu.onclick = () => nav.classList.toggle("open");
-
-  // Select plan and generate QR
-  function selectPlan(id, name, price) {
-    if (!isUserLoggedIn) {
-      alert("Please log in to see and subscribe to plans!");
-      window.location.href = "/login";
-      return;
-    }
-
-    selectedPlan = { id, name, price };
-    const paymentUrl = `https://paymentgateway.com/pay?amount=${price}`;
-
-    fetch("/generate_qr", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ payment_url: paymentUrl, plan_name: name, plan_price: price })
-    })
-      .then(res => res.blob())
-      .then(blob => {
-        const url = URL.createObjectURL(blob);
-        document.getElementById("qr-img").src = url;
-        document.getElementById("qr-container").style.display = "block";
-      });
-  }
-
-  // User modal show/hide
+  // Modal handling
   const userIcon = document.getElementById("userIcon");
   const userModal = document.getElementById("userModal");
   const closeModal = document.getElementById("closeModal");

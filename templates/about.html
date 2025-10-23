@@ -4,37 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About – EcoGrid</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
   <header>
     <nav class="navbar">
       <div class="logo">⚡ EcoGrid</div>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="about.html" class="active">About Us</a></li>
-        <li><a href="contact.html">Contact</a></li>
-        <li><a href="login.html">Login</a></li>
-        <li><a href="signup.html" class="btn">Sign Up</a></li>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about" class="active">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/login">Login</a></li>
+        <li><a href="/signup" class="btn">Sign Up</a></li>
       </ul>
-      <div class="menu-icon" id="menu-icon">☰</div>
     </nav>
   </header>
 
   <section class="slide-up">
     <h2>About EcoGrid</h2>
-    <p>EcoGrid AI is an intelligent energy system that converts wastewater into electricity using Microbial Fuel Cells (MFCs) and optimizes power flow through AI forecasting. Our mission is to make every drop of waste count — creating a circular, sustainable energy ecosystem.</p>
-    <p>We collaborate with government agencies like TNEB to ensure that renewable power is efficiently stored and distributed, supporting smart cities and green communities.</p>
+    <p>EcoGrid AI is a sustainable system that transforms wastewater into renewable energy using Microbial Fuel Cells (MFCs). Powered by AI forecasting and smart distribution, it helps balance energy demand and supply efficiently.</p>
   </section>
 
   <footer>
     <p>© 2025 EcoGrid | Thunder Coders</p>
   </footer>
-
-  <script>
-    const menu = document.getElementById('menu-icon');
-    const nav = document.getElementById('navLinks');
-    menu.onclick = () => nav.classList.toggle('open');
-  </script>
 </body>
 </html>

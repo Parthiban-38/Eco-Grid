@@ -5,37 +5,208 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact – EcoGrid</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    /* Contact Page Styles */
+    .contact-section {
+      padding: 60px 20px;
+      background: linear-gradient(135deg, #e8f9f0, #ffffff);
+      min-height: 85vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .contact-container {
+      display: flex;
+      flex-wrap: wrap;
+      max-width: 1100px;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      animation: fadeInUp 0.8s ease-in-out;
+    }
+
+    .contact-info, .contact-form-container {
+      flex: 1 1 450px;
+      padding: 40px;
+    }
+
+    .contact-info {
+      background: #0a8a3b;
+      color: white;
+    }
+
+    .contact-info h2 {
+      margin-bottom: 20px;
+      font-size: 1.8em;
+    }
+
+    .contact-info p {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+
+    .contact-form-container h2 {
+      color: #0a8a3b;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+    }
+
+    .contact-form input, .contact-form textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      outline: none;
+      font-family: inherit;
+      transition: border 0.3s;
+    }
+
+    .contact-form input:focus, .contact-form textarea:focus {
+      border-color: #0a8a3b;
+    }
+
+    .btn {
+      background-color: #0a8a3b;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #066b2e;
+    }
+
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #0a8a3b;
+      color: white;
+    }
+
+    /* User Popup */
+    .user-popup {
+      display: none;
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      border-radius: 10px;
+      padding: 15px;
+      z-index: 100;
+      width: 200px;
+    }
+    .user-popup.show {
+      display: block;
+    }
+    .user-popup p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+    .user-popup a {
+      color: #0a8a3b;
+      text-decoration: none;
+      display: block;
+      margin-top: 10px;
+    }
+    .user-popup a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
+
 <body>
-  <div class="page-wrapper">
   <header>
     <nav class="navbar">
       <div class="logo">⚡ EcoGrid</div>
-      <ul class="nav-links">
+      <ul class="nav-links" id="navLinks">
         <li><a href="/">Home</a></li>
-        <li><a href="/about">About</a></li>
+        <li><a href="/about">About Us</a></li>
         <li><a href="/contact" class="active">Contact</a></li>
-        <li><a href="/login">Login</a></li>
-        <li><a href="/signup" class="btn">Sign Up</a></li>
+
+        {% if user %}
+          {% if user.role == "admin" %}
+            <li><a href="/heatmap">Heatmap</a></li>
+          {% endif %}
+          <li>
+            <img src="{{ url_for('static', filename='images/user-icon.jpg') }}" 
+                 alt="User Icon" id="userIcon" 
+                 style="cursor:pointer;width:40px;border-radius:50%;" />
+          </li>
+          <li><a href="/logout" class="button">Logout</a></li>
+        {% else %}
+          <li><a href="/login" class="button">Login</a></li>
+          <li><a href="/signup" class="button">Signup</a></li>
+        {% endif %}
       </ul>
     </nav>
+
+    <!-- User Popup -->
+    <div class="user-popup" id="userPopup">
+      {% if user %}
+        <p><strong>{{ user.name }}</strong></p>
+        <p>{{ user.email }}</p>
+        <a href="/profile">View Profile</a>
+        <a href="/logout">Logout</a>
+      {% endif %}
+    </div>
   </header>
 
-  <section class="fade-in">
-    <h2>Contact Us</h2>
-    <p>We’d love to collaborate! Reach out to discuss sustainability initiatives and smart energy solutions.</p>
+  <!-- Contact Section -->
+  <section class="contact-section fade-in">
+    <div class="contact-container">
+      <div class="contact-info">
+        <h2>💬 Contact EcoGrid</h2>
+        <p>We’re here to collaborate on sustainable innovations and clean energy projects.</p>
+        <p><strong>Email:</strong> support@ecogrid.com</p>
+        <p><strong>Phone:</strong> +91 98765 43210</p>
+        <p><strong>Address:</strong> 42 GreenTech Park, Chennai, India</p>
+      </div>
 
-    <form class="contact-form">
-      <input type="text" placeholder="Your Name" required>
-      <input type="email" placeholder="Your Email" required>
-      <textarea placeholder="Your Message" rows="5" required></textarea>
-      <button class="btn">Send</button>
-    </form>
+      <div class="contact-form-container">
+        <h2>📩 Send a Message</h2>
+        <form class="contact-form" action="/send_message" method="POST">
+          <input type="text" name="name" placeholder="Your Name" required />
+          <input type="email" name="email" placeholder="Your Email" required />
+          <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+          <button type="submit" class="btn">Send Message</button>
+        </form>
+      </div>
+    </div>
   </section>
 
   <footer>
     <p>© 2025 EcoGrid | Thunder Coders</p>
   </footer>
-  </div>
+
+  <script>
+    // 🧠 User Icon Popup Script (works on all pages)
+    const userIcon = document.getElementById("userIcon");
+    const userPopup = document.getElementById("userPopup");
+
+    if (userIcon) {
+      userIcon.addEventListener("click", () => {
+        userPopup.classList.toggle("show");
+      });
+
+      window.addEventListener("click", (event) => {
+        if (!userIcon.contains(event.target) && !userPopup.contains(event.target)) {
+          userPopup.classList.remove("show");
+        }
+      });
+    }
+  </script>
 </body>
 </html>

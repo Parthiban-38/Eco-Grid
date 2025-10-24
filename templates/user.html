@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard - EcoGrid</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header>
+    <div class="navbar">
+      <div class="logo">⚡ EcoGrid</div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/" class="active">Home</a></li>
+        <li><a href="/about">About Us</a></li>
+        <li><a href="/contact">Contact</a></li>
+
+        {% if user %}
+          {% if user.role == "admin" %}
+            <li><a href="/heatmap">Heatmap</a></li>
+          {% endif %}
+          <li>
+            <img src="{{ url_for('static', filename='images/user-icon.jpg') }}" 
+                 alt="User Icon" class="user-icon" id="userIcon" 
+                 style="cursor:pointer;width:40px;border-radius:50%;" />
+          </li>
+          <li><a href="/logout" class="button">Logout</a></li>
+        {% else %}
+          <li><a href="/login" class="button">Login</a></li>
+          <li><a href="/signup" class="button">Signup</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>Welcome, {{ user.name }}!</h2>
+      <p>Email: {{ user.email }}</p>
+    </section>
+
+    <section>
+      <h2>Predicted Electricity Usage</h2>
+      <canvas id="usageChart" width="400" height="200"></canvas>
+    </section>
+
+    <section>
+      <h2>Get Subscription Plan Suggestions</h2>
+      <p>Enter your appliances to get AI-based plan recommendation:</p>
+
+      <form id="usageForm">
+        <label>Number of Fans: <input type="number" id="fans" min="0" value="1"></label><br>
+        <label>Number of Lights: <input type="number" id="lights" min="0" value="3"></label><br>
+        <label>Number of Fridges: <input type="number" id="fridges" min="0" value="1"></label><br>
+        <label>Other Appliances: <input type="number" id="other" min="0" value="0"></label><br>
+        <button type="submit">Get Suggested Plans</button>
+      </form>
+
+      <h3>Suggested Plans:</h3>
+      <div id="plansContainer"></div>
+    </section>
+  </main>
+
+  <script>
+document.getElementById("usageForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+
+    const fans = document.getElementById("fans").value;
+    const lights = document.getElementById("lights").value;
+    const fridges = document.getElementById("fridges").value;
+    const other = document.getElementById("other").value;
+
+    try {
+        const response = await fetch("/api/suggest_plan", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({fans, lights, fridges, other})
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch plans");
+
+        const data = await response.json();
+        const container = document.getElementById("plansContainer");
+        container.innerHTML = `<p>Estimated Usage: ${data.estimated_usage} units</p>`;
+
+        const div = document.createElement("div");
+        div.innerHTML = `
+            <strong>${data.estimated_usage}</strong>:  Price ₹${data.price} <br>
+            <button onclick="buyPlan('${data.estimated_usage}', ${data.price}, this)">Buy Now</button>
+        `;
+        container.appendChild(div);
+
+    } catch (err) {
+        console.error(err);
+        alert("Error fetching suggested plans.");
+    }
+});
+
+async function fetchPredictedElectricity() {
+    try {
+        const response = await fetch("/api/predict_electricity");
+        if (!response.ok) throw new Error("Failed to fetch electricity prediction");
+
+        const data = await response.json();
+        const predicted = data.predicted_electricity;
+
+        const ctx = document.getElementById('usageChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Predicted Usage'],
+                datasets: [{
+                    label: 'Electricity (Volts)',
+                    data: [predicted],
+                    backgroundColor: '#00b894'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: 'Predicted Electricity for Next Minute' }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 20
+                    }
+                }
+            }
+        });
+
+    } catch (err) {
+        console.error(err);
+        alert("Error fetching predicted electricity.");
+    }
+}
+
+async function buyPlan(plan_name, price, btn) {
+    if (!confirm(`Do you want to buy ${plan_name} for ₹${price}?`)) return;
+
+    try {
+        const response = await fetch("/api/buy_plan", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({plan_name, price})
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            alert(data.message);
+            btn.disabled = true;
+            btn.innerText = "Purchased";
+        } else {
+            alert(data.message);
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Payment failed or server error.");
+    }
+}
+
+window.onload = () => {
+    fetchPredictedElectricity();
+};
+  </script>
+
+  <footer>
+    <p>© 2025 EcoGrid | User Panel</p>
+  </footer>
+</body>
+</html>

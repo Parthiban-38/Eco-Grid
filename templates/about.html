@@ -1,34 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>About – EcoGrid</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    /* About Page Styling */
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f8fdf8;
+      color: #333;
+    }
+
+    .about-section {
+      padding: 80px 20px;
+      text-align: center;
+      background: linear-gradient(135deg, #e8f9f0, #ffffff);
+      animation: fadeInUp 0.8s ease-in-out;
+    }
+
+    .about-section h1 {
+      color: #0a8a3b;
+      font-size: 2.5em;
+      margin-bottom: 15px;
+    }
+
+    .about-section p {
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.7;
+      font-size: 1.1em;
+      color: #555;
+    }
+
+    .mission {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      padding: 80px 20px;
+    }
+
+    .mission img {
+      width: 400px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .mission-text {
+      max-width: 500px;
+      text-align: left;
+    }
+
+    .mission-text h2 {
+      color: #0a8a3b;
+      margin-bottom: 15px;
+    }
+
+    .mission-text p {
+      line-height: 1.6;
+      font-size: 1em;
+      color: #444;
+    }
+
+    .team-section {
+      background: #fff;
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .team-section h2 {
+      color: #0a8a3b;
+      margin-bottom: 40px;
+    }
+
+    .team-grid {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 40px;
+    }
+
+    .team-card {
+      background: #f9fff9;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      width: 250px;
+      transition: transform 0.3s ease;
+    }
+
+    .team-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .team-card img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+      border: 3px solid #0a8a3b;
+    }
+
+    .team-card h3 {
+      margin: 5px 0;
+      color: #0a8a3b;
+    }
+
+    .team-card p {
+      font-size: 0.9em;
+      color: #555;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #0a8a3b;
+      color: white;
+    }
+
+    /* Animation */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* User Popup */
+    .user-popup {
+      display: none;
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      border-radius: 10px;
+      padding: 15px;
+      z-index: 100;
+      width: 200px;
+    }
+    .user-popup.show { display: block; }
+    .user-popup p { margin: 5px 0; font-size: 14px; }
+    .user-popup a { color: #0a8a3b; text-decoration: none; display: block; margin-top: 10px; }
+    .user-popup a:hover { text-decoration: underline; }
+  </style>
 </head>
+
 <body>
-  <div class="page-wrapper">
   <header>
     <nav class="navbar">
       <div class="logo">⚡ EcoGrid</div>
-      <ul class="nav-links">
+      <ul class="nav-links" id="navLinks">
         <li><a href="/">Home</a></li>
-        <li><a href="/about" class="active">About</a></li>
+        <li><a href="/about" class="active">About Us</a></li>
         <li><a href="/contact">Contact</a></li>
-        <li><a href="/login">Login</a></li>
-        <li><a href="/signup" class="btn">Sign Up</a></li>
+
+        {% if user %}
+          {% if user.role == "admin" %}
+            <li><a href="/heatmap">Heatmap</a></li>
+          {% endif %}
+          <li>
+            <img src="{{ url_for('static', filename='images/user-icon.jpg') }}" 
+                 alt="User Icon" id="userIcon" 
+                 style="cursor:pointer;width:40px;border-radius:50%;" />
+          </li>
+          <li><a href="/logout" class="button">Logout</a></li>
+        {% else %}
+          <li><a href="/login" class="button">Login</a></li>
+          <li><a href="/signup" class="button">Signup</a></li>
+        {% endif %}
       </ul>
     </nav>
+
+    <!-- User Popup -->
+    <div class="user-popup" id="userPopup">
+      {% if user %}
+        <p><strong>{{ user.name }}</strong></p>
+        <p>{{ user.email }}</p>
+        <a href="/profile">View Profile</a>
+        <a href="/logout">Logout</a>
+      {% endif %}
+    </div>
   </header>
 
-  <section class="slide-up">
-    <h2>About EcoGrid</h2>
-    <p>EcoGrid AI is a sustainable system that transforms wastewater into renewable energy using Microbial Fuel Cells (MFCs). Powered by AI forecasting and smart distribution, it helps balance energy demand and supply efficiently.</p>
+  <!-- About Section -->
+  <section class="about-section">
+    <h1>About EcoGrid</h1>
+    <p>EcoGrid is a sustainable innovation platform dedicated to transforming waste into smart energy solutions. Our mission is to empower communities with clean, renewable energy systems that make the planet greener, one grid at a time.</p>
+  </section>
+
+  <section class="mission">
+    <img src="{{ url_for('static', filename='images/renewable.jpg') }}" alt="Renewable Energy">
+    <div class="mission-text">
+      <h2>🌱 Our Mission</h2>
+      <p>We believe in merging technology with environmental consciousness. EcoGrid focuses on converting waste into renewable energy using smart bioreactors and IoT-based monitoring systems, promoting sustainability through innovation.</p>
+      <p>Our solutions are designed to empower industries, homes, and cities to transition into smart eco-friendly systems — reducing carbon footprints and building a sustainable tomorrow.</p>
+    </div>
+  </section>
+
+  <section class="team-section">
+    <h2>👩‍🔬 Meet the Team</h2>
+    <div class="team-grid">
+      <div class="team-card">
+        <img src="{{ url_for('static', filename='images/team1.jpg') }}" alt="Team Member">
+        <h3>Priya Sharma</h3>
+        <p>Project Lead</p>
+      </div>
+      <div class="team-card">
+        <img src="{{ url_for('static', filename='images/team2.jpg') }}" alt="Team Member">
+        <h3>Ravi Kumar</h3>
+        <p>IoT Engineer</p>
+      </div>
+      <div class="team-card">
+        <img src="{{ url_for('static', filename='images/team3.jpg') }}" alt="Team Member">
+        <h3>Ananya Patel</h3>
+        <p>Environmental Scientist</p>
+      </div>
+      <div class="team-card">
+        <img src="{{ url_for('static', filename='images/team4.jpg') }}" alt="Team Member">
+        <h3>Vikram Singh</h3>
+        <p>AI Developer</p>
+      </div>
+    </div>
   </section>
 
   <footer>
     <p>© 2025 EcoGrid | Thunder Coders</p>
   </footer>
-</div>
+
+  <script>
+    // 🧠 User Icon Popup Script
+    const userIcon = document.getElementById("userIcon");
+    const userPopup = document.getElementById("userPopup");
+
+    if (userIcon) {
+      userIcon.addEventListener("click", () => {
+        userPopup.classList.toggle("show");
+      });
+
+      window.addEventListener("click", (event) => {
+        if (!userIcon.contains(event.target) && !userPopup.contains(event.target)) {
+          userPopup.classList.remove("show");
+        }
+      });
+    }
+  </script>
 </body>
 </html>
